@@ -10,16 +10,12 @@ import re
 import photo_check
 import paragraph
 import reference
+import reading
+import tree_compare
+import check_translate_pair
 cnt = 40
 
 
-def extract_contents_structure(sources):
-    lst = []
-    list_audio = sources.findAll('span', attrs={'class':'tocnumber'})
-    for i in list_audio:
-        temp = re.split('>|<', str(i))
-        lst.append(temp[2])
-    return lst
 
 
 def save_list(newlist,csv):
@@ -189,69 +185,20 @@ def pair():
     p.close()
 
 
-def check_translate_pair(sources_k):
-    l = sources_k.findAll('a',attrs={'accesskey':'t'})
-    s = str(l[0]).split(' ')
-    url = "https://ko.wikipedia.org"+str(s[2][6:-1])
-    try:
-        address = urlopen(url)
-    except:
-        return 0
-    sor = BeautifulSoup(address,"html.parser")
-    b_list = sor.findAll('b')
-    
-    
-    for x in b_list:
-        if(str(x).find("title=\"en:\"")!=-1):
-            return 1
-            break
-    return 0
-
-def make_tree(list):
-    root = zss.Node('root')
-    kid1 = zss.Node('tmp')
-    kid2 = zss.Node('tmp')
-    kid3 = zss.Node('tmp')
-    
-    for x in list:
-        l = len(x.split('.'))
-        if(l==1):
-            kid1 = zss.Node('1')
-            root.addkid(kid1)
-        elif(l==2):
-            kid2 = zss.Node('2')
-            kid1.addkid(kid2)
-        elif(l==3):
-            kid3 = zss.Node('3')
-            kid2.addkid(kid3)
-    
-    return root
-
-def tree_compare(sources_k,sources_e):
-    list_k = extract_contents_structure(sources_k)
-    A = make_tree(list_k)
-    list_e = extract_contents_structure(sources_e)
-    B = make_tree(list_e)
-    if(( len(list_k)+len(list_e) )/2==0):
-        return -1
-    return zss.simple_distance(A,B)/(( len(list_k)+len(list_e) )/2)
-    
-
 
 def check_all_pair():
     f = open("result.csv","w")
     a = 0
     while 1:
         print(a)
-        try:
-            k = open("./kor/kor_"+str(a)+".txt","r",encoding='UTF8')
-            sources_k = BeautifulSoup(k,"html.parser")
-            e = open("./eng/eng_"+str(a)+".txt","r",encoding='UTF8')
-            sources_e = BeautifulSoup(e,"html.parser")
-            f.write(str(reference.reference(sources_k,sources_e))+","+str(tree_compare(sources_k,sources_e))+","+str(photo_check.photo_check(sources_k,sources_e))+","+str(check_translate_pair(sources_k))+","+str(paragraph.paragraph(sources_k,sources_e))+"\n")
-            a=a+1
-        except:
-            break;
+        
+        k = open("./kor/kor_"+str(a)+".txt","r",encoding='UTF8')
+        sources_k = BeautifulSoup(k,"html.parser")
+        e = open("./eng/eng_"+str(a)+".txt","r",encoding='UTF8')
+        sources_e = BeautifulSoup(e,"html.parser")
+        f.write(str(reference.reference(sources_k,sources_e))+","+str(tree_compare.tree_compare(sources_k,sources_e))+","+str(photo_check.photo_check(sources_k,sources_e))+","+str(check_translate_pair.check_translate_pair(sources_k))+","+str(paragraph.paragraph(sources_k,sources_e))+","+str(reading.reading(sources_k,sources_e))+"\n")
+        a=a+1
+
 
     f.close()
 
