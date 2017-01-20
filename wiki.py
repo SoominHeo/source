@@ -195,7 +195,7 @@ def check_all_pair():
     a = 19
     while 1:
         #print(a)
-    
+
         
         k = open("dd/new random/kor/kor_"+str(a)+".txt","r",encoding='UTF8')
         html_kor=k.read()
@@ -224,7 +224,8 @@ def check_all_pair():
                 
             
         a=a+1
-        
-            
+
+
+
 check_all_pair()
 
