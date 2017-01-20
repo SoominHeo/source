@@ -226,11 +226,8 @@ def eng_sentence(final_header_eng):
     return final_header_eng
                 
         
-    
+def header(sourcesKOR, sourcesENG,i):
 
-while i<=18:
-
-    global i
 
     #저장된 한-영 HTML 받아오기
     '''
@@ -244,6 +241,7 @@ while i<=18:
     '''
     
     #샘플 한-영 HTML 받아오기
+    '''
     f_kor=open("dd/kor/kor_"+str(i)+".txt","r",encoding='UTF8')
     html_kor=f_kor.read()
     sourcesKOR = BeautifulSoup(html_kor,"html.parser")
@@ -251,7 +249,7 @@ while i<=18:
     f_eng=open("dd/eng/eng_"+str(i)+".txt","r",encoding='UTF8')
     html_eng=f_eng.read()
     sourcesENG = BeautifulSoup(html_eng,"html.parser")
-
+    '''
     
    
     #쓸때 없는 table 부분 삭제
@@ -264,37 +262,33 @@ while i<=18:
     tmp_kor=tmp_kor.replace(tmp_kor[:bd_kor+9],'')
     tmp_eng=tmp_eng.replace(tmp_eng[:bd_eng+9],'')
     
-    sourcesKOR=BeautifulSoup(tmp_kor,"html.parser")
-    sourcesENG=BeautifulSoup(tmp_eng,"html.parser")
+    sourcesKOR_tmp=BeautifulSoup(tmp_kor,"html.parser")
+    sourcesENG_tmp=BeautifulSoup(tmp_eng,"html.parser")
 
    
     #문단 부분만 추출
-    para_kor = sourcesKOR.findAll('p')
-    para_eng = sourcesENG.findAll('p')
+    para_kor = sourcesKOR_tmp.findAll('p')
+    para_eng = sourcesENG_tmp.findAll('p')
 
    
     #문단이 없으면 다음 문서로 넘어가기 
     if len(para_kor)==0 or len(para_eng)==0:
         i=i+1
-        continue
+        return -1
                 
-    print("["+str(i)+"]")    
+    #print("["+str(i)+"]")    
 
     #추출할 header를 저장하기 위한 파일오픈
-    #f_header_kor=open("dd/dd/kor_header/[header]kor_"+str(i)+".txt","w",encoding='UTF8')
-    #f_header_eng=open("dd/dd/eng_header/[header]eng_"+str(i)+".txt","w",encoding='UTF8')
+    f_header_kor=open("dd/dd/kor_header/[header]kor_"+str(i)+".txt","w",encoding='UTF8')
+    f_header_eng=open("dd/dd/eng_header/[header]eng_"+str(i)+".txt","w",encoding='UTF8')
 
-    #헤더 샘플 추출
-    f_header_kor=open("dd/sample_kor_header/[header]kor_"+str(i)+".txt","w",encoding='UTF8')
-    f_header_eng=open("dd/sample_eng_header/[header]eng_"+str(i)+".txt","w",encoding='UTF8')
-    
-    
+       
     ####  KOREA  HEADER  ####
     #header만 추출 
-    print("[kor]")
+    #print("[kor]")
     non_bmp_map=dict.fromkeys(range(0x10000,sys.maxunicode+1),0xfffd)
     kor_content_list=str(para_kor).translate(non_bmp_map).split("<p></p>")
-    kor_content_list="<p>".join(kor_content_list).split("</table>\n<p>")
+    #kor_content_list="<p>".join(kor_content_list).split("</table>\n<p>")
     header_kor=remove_comma(str(kor_content_list[0]).translate(non_bmp_map))
     header_kor=remove_span(header_kor)
     header_kor=remove_tags(header_kor)
@@ -306,18 +300,18 @@ while i<=18:
     #문장을 나누고 파일에 쓰기 
     final_header_kor=kor_sentence(header_kor)
     for m in range(len(final_header_kor)):
-                   print(final_header_kor[m])
+                   #print(final_header_kor[m])
                    f_header_kor.write(final_header_kor[m])
     f_header_kor.write("\n")
     
-    print("----------------------------------")
+    #print("----------------------------------")
 
     ####  ENGLISH HEADER  ####
     #header만 추출
-    print("[eng]")
+    #print("[eng]")
     non_bmp_map2=dict.fromkeys(range(0x10000,sys.maxunicode+1),0xfffd)
     eng_content_list=str(para_eng).translate(non_bmp_map2).split("<p></p>")
-    eng_content_list="<p>".join(eng_content_list).split("</table>\n<p>")
+    #eng_content_list="<p>".join(eng_content_list).split("</table>\n<p>")
     header_eng=remove_comma(str(eng_content_list[0]).translate(non_bmp_map2))
     header_eng=remove_span(header_eng)
     header_eng=remove_tags(header_eng)
@@ -331,13 +325,14 @@ while i<=18:
     final_header_eng=sent_tokenize(header_eng)
     final_header_eng=eng_sentence(final_header_eng)
     for x in range(len(final_header_eng)):
-                print(final_header_eng[x])
+                #print(final_header_eng[x])
                 f_header_eng.write(final_header_eng[x])
                 f_header_eng.write("\n") 
     f_header_eng.write("\n")            
-    
-    print("\n\n")
-    print("\n\n")
+
+    return 0 
+    #print("\n\n")
+    #print("\n\n")
 
     
-    i=i+1
+

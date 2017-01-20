@@ -14,6 +14,7 @@ import reading
 import tree_compare
 import check_translate_pair
 import metric
+import header
 cnt = 40
 
 
@@ -190,38 +191,40 @@ def pair():
         
 
 def check_all_pair():
-    f = open("New_Random_Sample_382.csv","w")
-    a = 0
+    #f = open("New_Random_Sample_382.csv","w")
+    a = 19
     while 1:
         #print(a)
-
-        try:
-            k = open("dd/new random/kor/kor_"+str(a)+".txt","r",encoding='UTF8')
-            sources_k = BeautifulSoup(k,"html.parser")
-            e = open("dd/new random/eng/eng_"+str(a)+".txt","r",encoding='UTF8')
-            sources_e = BeautifulSoup(e,"html.parser")
-
-            t1=reference.reference(sources_k,sources_e)
-            t2=tree_compare.tree_compare(sources_k,sources_e)
-            t3=photo_check.photo_check(sources_k,sources_e)
-            t4=check_translate_pair.check_translate_pair(sources_k)
-            t5=paragraph.paragraph(sources_k,sources_e)
-            t6=reading.reading(sources_k,sources_e)
+    
         
-            final_result=metric.metric(t1,t2 ,t3 ,t4 ,t5 ,t6) 
+        k = open("dd/new random/kor/kor_"+str(a)+".txt","r",encoding='UTF8')
+        html_kor=k.read()
+        sources_k = BeautifulSoup(html_kor,"html.parser")
+        e = open("dd/new random/eng/eng_"+str(a)+".txt","r",encoding='UTF8')
+        html_eng=e.read()
+        sources_e = BeautifulSoup(html_eng,"html.parser")
 
-            print("["+str(a)+"]",round(final_result,2))
-            f.write(str(t1)+","+str(t2)+","+str(t3)+","+str(t4)+","+str(t5)+","+str(t6)+","+str(final_result)+"\n")
-            a=a+1
-        except:
-            break
+        
+        t1=reference.reference(sources_k,sources_e)
+        t2=tree_compare.tree_compare(sources_k,sources_e)
+        t3=photo_check.photo_check(sources_k,sources_e)
+        t4=check_translate_pair.check_translate_pair(sources_k)
+        t5=paragraph.paragraph(sources_k,sources_e)
+        t6=reading.reading(sources_k,sources_e)
+        
+        final_result=metric.metric(t1,t2 ,t3 ,t4 ,t5 ,t6) 
 
+        print("["+str(a)+"]",round(final_result,2))
 
-    f.close()
-
-
-#make_list_csv()
-#pair()
-#cro()
+        if final_result>=0.8:
+            ck=header.header(sources_k, sources_e, a)
+            if ck==-1:
+                a=a+1
+                continue
+                
+            
+        a=a+1
+        
+            
 check_all_pair()
 
