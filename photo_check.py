@@ -25,7 +25,7 @@ def photo_check(sources_ko,sources_en):
              tmp2=tmp[1].split('"')
              tmp3=tmp2[0].split(':')
              
-             if len(tmp3[1])==0 or tmp3[1]=='COMMONS-LOGO.SVG':
+             if len(tmp3)==1 or tmp3[1]=='COMMONS-LOGO.SVG':
                   continue
              photo_address_ko.append(tmp3[1])
              
@@ -42,7 +42,7 @@ def photo_check(sources_ko,sources_en):
              tmp2=tmp[1].split('"')
              tmp3=tmp2[0].split(':')
 
-             if len(tmp3[1])==0 or tmp3[1]=='COMMONS-LOGO.SVG':
+             if len(tmp3)==1 or tmp3[1]=='COMMONS-LOGO.SVG':
                   continue
              if tmp3[1] not in photo_address_ko:
                   photo_address_ko.append(tmp3[1])
@@ -64,8 +64,8 @@ def photo_check(sources_ko,sources_en):
              tmp2_e=tmp_e[1].split('"')
              tmp3_e=tmp2_e[0].split(':')
 
-             if (len(tmp3_e) == 1): continue
-             if len(tmp3_e[1])==0 or tmp3_e[1]=='COMMONS-LOGO.SVG':
+             
+             if len(tmp3_e)==1 or tmp3_e[1]=='COMMONS-LOGO.SVG':
                   continue
              photo_address_en.append(tmp3_e[1])
 
@@ -81,7 +81,7 @@ def photo_check(sources_ko,sources_en):
              tmp2_e=tmp_e[1].split('"')
              tmp3_e=tmp2_e[0].split(':')
              
-             if len(tmp3_e[1])==0 or tmp3_e[1]=='COMMONS-LOGO.SVG':
+             if len(tmp3_e)==1 or tmp3_e[1]=='COMMONS-LOGO.SVG':
                   continue
              if tmp3_e[1] not in photo_address_en:
                   photo_address_en.append(tmp3_e[1])
