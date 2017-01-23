@@ -197,10 +197,10 @@ def check_all_pair():
         #print(a)
 
         
-        k = open("dd/new random/kor/kor_"+str(a)+".txt","r",encoding='UTF8')
+        k = open("./kor/kor_"+str(a)+".txt","r",encoding='UTF8')
         html_kor=k.read()
         sources_k = BeautifulSoup(html_kor,"html.parser")
-        e = open("dd/new random/eng/eng_"+str(a)+".txt","r",encoding='UTF8')
+        e = open("./eng/eng_"+str(a)+".txt","r",encoding='UTF8')
         html_eng=e.read()
         sources_e = BeautifulSoup(html_eng,"html.parser")
 
@@ -211,7 +211,9 @@ def check_all_pair():
         t4=check_translate_pair.check_translate_pair(sources_k)
         t5=paragraph.paragraph(sources_k,sources_e)
         t6=reading.reading(sources_k,sources_e)
-        
+        if(t5==-1):
+            a=a+1
+            continue
         final_result=metric.metric(t1,t2 ,t3 ,t4 ,t5 ,t6) 
 
         print("["+str(a)+"]",round(final_result,2))
