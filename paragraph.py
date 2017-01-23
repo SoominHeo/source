@@ -1,10 +1,3 @@
-#-*- coding: utf-8 -*-
-
-from bs4 import BeautifulSoup
-from urllib.request import urlopen
-import sys
-
-# check the number of the paragraph in header
 def paragraph(sources_k,sources_e):
     kor_paragraph = 0
     eng_paragraph = 0
@@ -30,13 +23,13 @@ def paragraph(sources_k,sources_e):
         eng_header = "<p>" + str(eng_header[1:])
     eng_paragraph = len(str(eng_header).split("<p>")) -1
 
-    if(kor_paragraph == eng_paragraph):
-        if(kor_paragraph == 0):
-            result = -1
-        else:
-            result = 1 
+    #if there is no paragraph in text, result = -1
+    if(kor_paragraph == 1 or eng_paragraph == 1):
+        result = -1
     else:
-        result = 0
+        if(kor_paragraph == eng_paragraph):
+            result = 1 
+        else:
+            result = 0
 
     return result
-
