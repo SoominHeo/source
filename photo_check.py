@@ -24,7 +24,8 @@ def photo_check(sources_ko,sources_en):
 
              tmp2=tmp[1].split('"')
              tmp3=tmp2[0].split(':')
-             if tmp3[1]=='COMMONS-LOGO.SVG':
+             
+             if len(tmp3)==1 or tmp3[1]=='COMMONS-LOGO.SVG':
                   continue
              photo_address_ko.append(tmp3[1])
              
@@ -41,7 +42,7 @@ def photo_check(sources_ko,sources_en):
              tmp2=tmp[1].split('"')
              tmp3=tmp2[0].split(':')
 
-             if tmp3[1]=='COMMONS-LOGO.SVG':
+             if len(tmp3)==1 or tmp3[1]=='COMMONS-LOGO.SVG':
                   continue
              if tmp3[1] not in photo_address_ko:
                   photo_address_ko.append(tmp3[1])
@@ -63,8 +64,8 @@ def photo_check(sources_ko,sources_en):
              tmp2_e=tmp_e[1].split('"')
              tmp3_e=tmp2_e[0].split(':')
 
-             if (len(tmp3_e) == 1): continue
-             if tmp3_e[1]=='COMMONS-LOGO.SVG':
+             
+             if len(tmp3_e)==1 or tmp3_e[1]=='COMMONS-LOGO.SVG':
                   continue
              photo_address_en.append(tmp3_e[1])
 
@@ -80,7 +81,7 @@ def photo_check(sources_ko,sources_en):
              tmp2_e=tmp_e[1].split('"')
              tmp3_e=tmp2_e[0].split(':')
              
-             if tmp3_e[1]=='COMMONS-LOGO.SVG':
+             if len(tmp3_e)==1 or tmp3_e[1]=='COMMONS-LOGO.SVG':
                   continue
              if tmp3_e[1] not in photo_address_en:
                   photo_address_en.append(tmp3_e[1])
@@ -99,21 +100,28 @@ def photo_check(sources_ko,sources_en):
           result=-1
           return result 
 
-     if len(photo_address_ko)>=len(photo_address_en):
-          denominator=len(photo_address_en)
-     else:
-          denominator=len(photo_address_ko)
-          
+     jaccard=photo_address_ko
+     for j in range(len(photo_address_en)):
+          if photo_address_en[j] not in jaccard:
+               jaccard.append(photo_address_en[j])
+
+     denominator=len(jaccard)
+                    
      numerator=total
 
      try:
           if denominator>5:
-               if (numerator/denominator)>=0.8:
+               if (numerator/denominator)>=0.3:
+                    result=1
+               else:
+                    result=0
+          elif denominator==2:
+               if numerator==2:
                     result=1
                else:
                     result=0
           else:
-               if (numerator/denominator)>=0.6:
+               if (numerator/denominator)>=0.3:
                     result=1
                else:
                     result=0
@@ -121,8 +129,6 @@ def photo_check(sources_ko,sources_en):
           result=0
           
      return result
-
-             
 
 
 
