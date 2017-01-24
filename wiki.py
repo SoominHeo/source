@@ -194,6 +194,7 @@ def pair_dic(): #pair있는 인덱스 만들기
 def pair_cro():
     p = open("./list/pair470000.csv","r",encoding='UTF8')
     f = open("pair_cro.csv","w",encoding='UTF8')
+    log = open("log.txt","w",encoding='UTF8')
     filenumber = 0
     while 1:
         line = p.readline()
@@ -201,7 +202,11 @@ def pair_cro():
         s = line.split(',\t')
         print("------------------")
         print("original : ",s[2])
-        address_kor = urlopen(s[0])
+        try:
+            address_kor = urlopen(s[0])
+        except:
+            log.write(line)
+            continue
         sources_kor = BeautifulSoup(address_kor,"html.parser")
         
         list = sources_kor.findAll('title')
@@ -213,15 +218,19 @@ def pair_cro():
             f.write(line)
             kor = open("./noredirect_kor_html/kor_"+str(filenumber)+".html","w",encoding='UTF8')
             eng = open("./noredirect_eng_html/eng_"+str(filenumber)+".html","w",encoding='UTF8')
-            address_eng = urlopen(s[1])
+            try:
+                address_eng = urlopen(s[1])
+            except:
+                log.write(line)
+                continue
             sources_eng = BeautifulSoup(address_eng,"html.parser")
-            
             kor.write(str(sources_kor))
             eng.write(str(sources_eng))
             kor.close()
             eng.close()
             filenumber = filenumber+1
-
+    log.close()
+    p.close()
     f.close()
 def check_all_pair():
     #f = open("New_Random_Sample_382.csv","w")
