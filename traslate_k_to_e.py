@@ -15,18 +15,19 @@ import make_dictionary
 def translate_k_to_e(dic):
     lst = os.listdir("./header/kor/")
     for i in lst:
+        print (i)
         f = open("./header/kor/"+str(i), "r", encoding="UTF8")
-        k = open("./header/changed_kor/"+str(i), "w")
+        k = open("./header/changed_kor/"+str(i), "w", encoding="UTF8")
         a = 0
         for j in f.readlines():
             words = j.split(",")
             words.pop()
             for element in words:
-                k.write (str(dic[element]) + ",")
+                if element in dic.keys():
+                    k.write (str(dic[element]) + ",")
             k.write ("\n")
             a = a + 1
-'''
+
 #using example
 dic = make_dictionary.make_dictionary()
 translate_k_to_e(dic)
-'''
