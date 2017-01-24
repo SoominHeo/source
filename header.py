@@ -224,6 +224,49 @@ def eng_sentence(final_header_eng):
     
 
     return final_header_eng
+
+def check_table_index(sources):
+    
+    #쓸때 없는 table 위치 찾기(kor)
+    table_st=[]
+    table_fi=[]
+    st=-1
+    fi=-1
+    while 1:
+        st=str(sources).find('<table',st+1)
+        if st!=-1:
+            table_st.append(st)
+        else:
+            break
+
+    while 1:
+        fi=str(sources).find('</table>',fi+1)
+        if fi!=-1:
+            table_fi.append(fi)
+        else:
+            break
+
+    #table 쌍 맞춰서 리스트에 집어넣음 
+    table_set=[[] for i in range(len(table_fi))]
+    i=0
+    j=0
+    while 1:
+        
+        if i>=len(table_fi):
+            break
+        ct=0
+        while 1:  
+            if  j>=len(table_st) or table_fi[i]<table_st[j]:
+                table_set[i].append(table_st[i])
+                table_set[i].append(table_fi[j-1])
+                break
+
+            else:
+                j=j+1
+                ct=ct+1
+                
+        i=i+ct
+    return table_set
                 
         
 def header(sourcesKOR, sourcesENG,i):
@@ -253,14 +296,37 @@ def header(sourcesKOR, sourcesENG,i):
     
    
     #쓸때 없는 table 부분 삭제
-    bd_kor=str(sourcesKOR).find('</table>\n<p>')
-    bd_eng=str(sourcesENG).find('</table>\n<p>')
+    
 
     tmp_kor=str(sourcesKOR)
     tmp_eng=str(sourcesENG)
     
-    tmp_kor=tmp_kor.replace(tmp_kor[:bd_kor+9],'')
-    tmp_eng=tmp_eng.replace(tmp_eng[:bd_eng+9],'')
+    table_set_kor=check_table_index(sourcesKOR)
+    table_set_eng=check_table_index(sourcesENG)
+
+
+    #불필요한 table제거 (kor)  
+    kkk=[]
+    for i in range(len(table_set_kor)):
+        if table_set_kor[i]==[]:
+            continue
+        kkk.append(tmp_kor[table_set_kor[i][0]:table_set_kor[i][1]+9])
+        
+
+    for i in range(len(kkk)): 
+        tmp_kor=tmp_kor.replace(str(kkk[i]),'')
+
+    #불필요한 table제거 (eng)  
+    eee=[]
+    for i in range(len(table_set_eng)):
+        if table_set_eng[i]==[]:
+            continue
+        eee.append(tmp_eng[table_set_eng[i][0]:table_set_eng[i][1]+9])
+        
+
+    for i in range(len(eee)): 
+        tmp_eng=tmp_eng.replace(str(eee[i]),'')
+        
     
     sourcesKOR_tmp=BeautifulSoup(tmp_kor,"html.parser")
     sourcesENG_tmp=BeautifulSoup(tmp_eng,"html.parser")
