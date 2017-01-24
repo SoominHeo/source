@@ -45,11 +45,13 @@ def kor_sentence(p):
               elif z>0:
                        prev=p[z-1]
 
+
               # next word
               if z==len(p)-1:
                        next_word=""
               else:
                        next_word=p[z+1]
+
 
               # double quotes beginning and ending
               if p[z]=="\"":
@@ -64,6 +66,7 @@ def kor_sentence(p):
               elif p[z]=="”" and start==1:
                       finish=1
 
+
               # single quotes beginning and ending 
               if p[z]=="\'":
                       if s_start==1:
@@ -76,7 +79,8 @@ def kor_sentence(p):
               elif p[z]=="’" and s_start==1:
                       s_finish=1
 
-                                     # separate sentences
+                      
+               # separate sentences
               if p[z]=="." or p[z]=="!" or p[z]=="?":
                       if prev=="가" or prev== "나" or prev== "다" or prev== "라" or prev== "까" or prev== "지" or prev== "요" or prev=="죠" or prev=="임" or prev=="음" or prev=="함" or prev=="오":
                               if start==1 and finish==0:
@@ -100,6 +104,7 @@ def kor_sentence(p):
                                               start=0
                                               finish=0
 
+                              
                               #single case
                               elif s_start==1 and s_finish==0:
                                       temp=temp+p[z]
@@ -163,8 +168,10 @@ def eng_sentence(final_header_eng):
     start=-1
     finish=-1
     cnt=0
+    
 
     # '('로 시작해서 ')'까지 찾아서 제거
+    
     x=0
     while 1:
         if x==len(final_header_eng):
@@ -201,6 +208,7 @@ def eng_sentence(final_header_eng):
         finish=-1
 
     # 공백이거나 '.'만 있는 라인제거
+    
     for x in range(len(final_header_eng)):
 
         if final_header_eng[cnt]=='' or final_header_eng[cnt]=='.':
@@ -210,38 +218,113 @@ def eng_sentence(final_header_eng):
 
         if len(final_header_eng)-1==cnt:
             break
+            
+    
+
     return final_header_eng
+
+def check_table_index(sources):
+    
+    #쓸때 없는 table 위치 찾기(kor)
+    table_st=[]
+    table_fi=[]
+    st=-1
+    fi=-1
+    while 1:
+        st=str(sources).find('<table',st+1)
+        if st!=-1:
+            table_st.append(st)
+        else:
+            break
+
+    while 1:
+        fi=str(sources).find('</table>',fi+1)
+        if fi!=-1:
+            table_fi.append(fi)
+        else:
+            break
+
+    #table 쌍 맞춰서 리스트에 집어넣음 
+    table_set=[[] for i in range(len(table_fi))]
+    i=0
+    j=0
+    while 1:
+        
+        if i>=len(table_fi):
+            break
+        ct=0
+        while 1:  
+            if  j>=len(table_st) or table_fi[i]<table_st[j]:
+                table_set[i].append(table_st[i])
+                table_set[i].append(table_fi[j-1])
+                break
+
+            else:
+                j=j+1
+                ct=ct+1
+                
+        i=i+ct
+    return table_set
                 
 i=0
-while i<1000:
+while i<40:
+
+
     #저장된 한-영 HTML 받아오기
-    print (i)
-    f_kor=open("./kor/kor_"+str(i)+".txt","r",encoding='UTF8')
+    
+    f_kor=open("dd/kor/kor_"+str(i)+".txt","r",encoding='UTF8')
     html_kor=f_kor.read()
     sourcesKOR = BeautifulSoup(html_kor,"html.parser")
 
-    f_eng=open("./eng/eng_"+str(i)+".txt","r",encoding='UTF8')
+    f_eng=open("dd/eng/eng_"+str(i)+".txt","r",encoding='UTF8')
     html_eng=f_eng.read()
     sourcesENG = BeautifulSoup(html_eng,"html.parser")
-
+    
+    
+   
     #쓸때 없는 table 부분 삭제
-    bd_kor=str(sourcesKOR).find('</table>\n<p>')
-    bd_eng=str(sourcesENG).find('</table>\n<p>')
+    
 
     tmp_kor=str(sourcesKOR)
     tmp_eng=str(sourcesENG)
+
+    table_set_kor=check_table_index(sourcesKOR)
+    table_set_eng=check_table_index(sourcesENG)
+
+
+    #불필요한 table제거 (kor)  
+    kkk=[]
+    for i in range(len(table_set_kor)):
+        if table_set_kor[i]==[]:
+            continue
+        kkk.append(tmp_kor[table_set_kor[i][0]:table_set_kor[i][1]+9])
+        
+
+    for i in range(len(kkk)): 
+        tmp_kor=tmp_kor.replace(str(kkk[i]),'')
+
+    #불필요한 table제거 (eng)  
+    eee=[]
+    for i in range(len(table_set_eng)):
+        if table_set_eng[i]==[]:
+            continue
+        eee.append(tmp_eng[table_set_eng[i][0]:table_set_eng[i][1]+9])
+        
+
+    for i in range(len(eee)): 
+        tmp_eng=tmp_eng.replace(str(eee[i]),'')
     
-    tmp_kor=tmp_kor.replace(tmp_kor[:bd_kor+9],'')
-    tmp_eng=tmp_eng.replace(tmp_eng[:bd_eng+9],'')
     
     sourcesKOR_tmp=BeautifulSoup(tmp_kor,"html.parser")
     sourcesENG_tmp=BeautifulSoup(tmp_eng,"html.parser")
 
+   
     #문단 부분만 추출
     para_kor = sourcesKOR_tmp.findAll('p')
     para_eng = sourcesENG_tmp.findAll('p')
 
-    #문단이 없으면 다음 문서로 넘어가기
+   
+    #문단이 없으면 다음 문서로 넘어가기 
     if len(para_kor)==0 or len(para_eng)==0:
         i=i+1
         continue
@@ -249,8 +332,8 @@ while i<1000:
     print("["+str(i)+"]")    
 
     #추출할 header_link를 저장하기 위한 파일오픈
-    f_header_kor=open("./header/kor/"+str(i)+".txt","w",encoding='UTF8')
-    f_header_eng=open("./header/eng/"+str(i)+".txt","w",encoding='UTF8')
+    f_header_kor=open("dd/kor_header_link(40)/kor_"+str(i)+".txt","w",encoding='UTF8')
+    f_header_eng=open("dd/eng_header_link(40)/eng_"+str(i)+".txt","w",encoding='UTF8')
        
     ####  KOREA  HEADER  ####
     #header만 추출 
@@ -291,16 +374,22 @@ while i<1000:
                 break
 
     #<a ~ </a>부분에서 단어만 뽑아서 파일에 쓰기 
-    tmp=[[]for a in range(len(tmp_kor_link))]
-    for a in range(len(tmp_kor_link)):
-        for j in range(len(tmp_kor_link[a])):
-            st=tmp_kor_link[a][j].find('title="')
-            fi=tmp_kor_link[a][j].find('"',st+7)
-            tt=tmp_kor_link[a][j]
-            tmp[a].append(tt[st+7:fi])
-            f_header_kor.write(str(tmp[a][j])+",")
+    tmp=[[]for i in range(len(tmp_kor_link))]
+    for i in range(len(tmp_kor_link)):
+        for j in range(len(tmp_kor_link[i])):
+            st=tmp_kor_link[i][j].find('title="')
+            fi=tmp_kor_link[i][j].find('"',st+7)
+            tt=tmp_kor_link[i][j]
+            tmp[i].append(tt[st+7:fi])
+            f_header_kor.write(str(tmp[i][j])+",")
         f_header_kor.write("\n")
     f_header_kor.write("\n")
+    
+                
+            
+    
+    
+    print("----------------------------------")
 
     ####  ENGLISH HEADER  ####
     #header만 추출
@@ -318,7 +407,7 @@ while i<1000:
     #문장을 나누고 파일에 link만 쓰기
     final_header_eng=sent_tokenize(header_eng)
     final_header_eng=eng_sentence(final_header_eng)
-    tmp_eng_link=[[]for a in range(len(final_header_eng))]
+    tmp_eng_link=[[]for i in range(len(final_header_eng))]
 
     #<a ~ </a>부분 잘라내기
     for m in range(len(final_header_eng)):
@@ -341,15 +430,20 @@ while i<1000:
                         break
                 break
     #<a ~ </a>부분에서 단어만 뽑아서 파일에 쓰기 
-    tmp=[[]for a in range(len(tmp_eng_link))]
-    for a in range(len(tmp_eng_link)):
-        for j in range(len(tmp_eng_link[a])):
-            st=tmp_eng_link[a][j].find('title="')
-            fi=tmp_eng_link[a][j].find('"',st+7)
-            tt=tmp_eng_link[a][j]
-            tmp[a].append(tt[st+7:fi])
-            f_header_eng.write(str(tmp[a][j])+",")
+    tmp=[[]for i in range(len(tmp_eng_link))]
+    for i in range(len(tmp_eng_link)):
+        for j in range(len(tmp_eng_link[i])):
+            st=tmp_eng_link[i][j].find('title="')
+            fi=tmp_eng_link[i][j].find('"',st+7)
+            tt=tmp_eng_link[i][j]
+            tmp[i].append(tt[st+7:fi])
+            f_header_eng.write(str(tmp[i][j])+",")
         f_header_eng.write("\n")
     f_header_eng.write("\n")
-    print ("*")
+                    
+
     i=i+1
+    
+
+    
+
