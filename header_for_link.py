@@ -269,22 +269,20 @@ def check_table_index(sources):
 i=0
 while i<40:
 
-
-    #저장된 한-영 HTML 받아오기
     
-    f_kor=open("./kor/kor_"+str(i)+".txt","r",encoding='UTF8')
+    #저장된 한-영 HTML 받아오기
+   
+    f_kor=open("dd/kor/kor_"+str(i)+".txt","r",encoding='UTF8')
     html_kor=f_kor.read()
     sourcesKOR = BeautifulSoup(html_kor,"html.parser")
 
-    f_eng=open("./eng/eng_"+str(i)+".txt","r",encoding='UTF8')
+    f_eng=open("dd/eng/eng_"+str(i)+".txt","r",encoding='UTF8')
     html_eng=f_eng.read()
     sourcesENG = BeautifulSoup(html_eng,"html.parser")
     
     
    
     #쓸때 없는 table 부분 삭제
-    
-
     tmp_kor=str(sourcesKOR)
     tmp_eng=str(sourcesENG)
 
@@ -318,11 +316,12 @@ while i<40:
     sourcesKOR_tmp=BeautifulSoup(tmp_kor,"html.parser")
     sourcesENG_tmp=BeautifulSoup(tmp_eng,"html.parser")
 
+    
    
     #문단 부분만 추출
     para_kor = sourcesKOR_tmp.findAll('p')
     para_eng = sourcesENG_tmp.findAll('p')
-
+    
    
     #문단이 없으면 다음 문서로 넘어가기 
     if len(para_kor)==0 or len(para_eng)==0:
@@ -332,8 +331,8 @@ while i<40:
     print("["+str(i)+"]")    
 
     #추출할 header_link를 저장하기 위한 파일오픈
-    f_header_kor=open("./header/kor/"+str(i)+".txt","w",encoding='UTF8')
-    f_header_eng=open("./header/eng/"+str(i)+".txt","w",encoding='UTF8')
+    f_header_kor=open("dd/kor_header_link(40)/kor_"+str(i)+".txt","w",encoding='UTF8')
+    f_header_eng=open("dd/eng_header_link(40)/eng_"+str(i)+".txt","w",encoding='UTF8')
        
     ####  KOREA  HEADER  ####
     #header만 추출 
@@ -373,17 +372,31 @@ while i<40:
                         break
                 break
 
-    #<a ~ </a>부분에서 단어만 뽑아서 파일에 쓰기 
-    tmp=[[]for a in range(len(tmp_kor_link))]
-    for a in range(len(tmp_kor_link)):
-        for j in range(len(tmp_kor_link[a])):
-            st=tmp_kor_link[a][j].find('title="')
-            fi=tmp_kor_link[a][j].find('"',st+7)
-            tt=tmp_kor_link[a][j]
-            tmp[a].append(tt[st+7:fi])
-            f_header_kor.write(str(tmp[a][j])+",")
+    #<a ~ </a>부분에서 단어만 뽑아서 파일에 쓰기
+    
+    
+    tmp=[[]for i in range(len(tmp_kor_link))]
+    for i in range(len(tmp_kor_link)):
+        if len(tmp_kor_link[i])==0:
+            f_header_kor.write("\n")
+            continue
+        for j in range(len(tmp_kor_link[i])):
+            st=tmp_kor_link[i][j].find('title="')
+            if st==-1:
+                continue
+            fi=tmp_kor_link[i][j].find('"',st+7)
+            tt=tmp_kor_link[i][j]
+            if str(tt[st+7:st+10])=='en:':
+                f_header_kor.write(str(tt[st+10:fi])+",")
+            else:
+                if str(tt[fi-1])==' ':
+                    f_header_kor.write(str(tt[st+7:fi-1])+",")
+                else:    
+                    f_header_kor.write(str(tt[st+7:fi])+",")
         f_header_kor.write("\n")
     f_header_kor.write("\n")
+                    
+    
                 
             
     
@@ -429,16 +442,28 @@ while i<40:
                         break
                 break
     #<a ~ </a>부분에서 단어만 뽑아서 파일에 쓰기 
-    tmp=[[]for a in range(len(tmp_eng_link))]
-    for a in range(len(tmp_eng_link)):
-        for j in range(len(tmp_eng_link[a])):
-            st=tmp_eng_link[a][j].find('title="')
-            fi=tmp_eng_link[a][j].find('"',st+7)
-            tt=tmp_eng_link[a][j]
-            tmp[a].append(tt[st+7:fi])
-            f_header_eng.write(str(tmp[a][j])+",")
+    tmp=[[]for i in range(len(tmp_eng_link))]
+    for i in range(len(tmp_eng_link)):
+        if len(tmp_eng_link[i])==0:
+            f_header_eng.write("\n")
+            continue
+        for j in range(len(tmp_eng_link[i])):
+            st=tmp_eng_link[i][j].find('title="')
+            if st==-1:
+                continue
+            fi=tmp_eng_link[i][j].find('"',st+7)
+            tt=tmp_eng_link[i][j]
+            if str(tt[st+7:st+10])=='en:':
+                f_header_eng.write(str(tt[st+10:fi])+",")
+            else:
+                if str(tt[fi-1])==' ':
+                    f_header_eng.write(str(tt[st+7:fi-1])+",")
+                else:    
+                    f_header_eng.write(str(tt[st+7:fi])+",")
         f_header_eng.write("\n")
     f_header_eng.write("\n")
+                    
+
     i=i+1
     
 
