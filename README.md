@@ -71,18 +71,18 @@
 - **reference.py** : 바깥고리 수 비교
 - **translate_k_to_e.py** : ./make_dictionary.py를 import해서 한글 단어를 영어 단어로 바꾼다. 
 - **tree_compare.py** : 목차의 edit distance
-- **wiki.py** : 
-	- def remove_tags(data): 
-	- def save_list(newlist, csv): 
-	- def save_csv(url, title, tt, csv): 
-	- der make_list_csv(): 
-	- def readcsv(): 
-	- def script(list_audio, source): 
-	- def cro(): 
-	- der pair_dic(): 
-	- def pair_cro(): 
-	- def check_all_pair(): 
-	- def delete_subtitle():
+- **wiki.py** 
+	- **def remove_tags(data)** 
+	- **def save_list(newlist, csv)** 
+	- **def save_csv(url, title, tt, csv)** 
+	- **def make_list_csv()** 
+	- **def readcsv()** 
+	- **def script(list_audio, source)** 
+	- **def cro()** 
+	- **def pair_dic()** 
+	- **def pair_cro()** 
+	- **def check_all_pair()** 
+	- **def delete_subtitle()**
 
 - **list**
 	- **New_Random_Sample_382.csv** : 47만개의 한글 wikipedia url중에 500개를 random하게 sampling하고 영어가 있는 page를 추출한 뒤, matric에 적용 후 반환된 값들
