@@ -53,8 +53,8 @@
 	- **LCS.py** : no_single_space_text의 en과 ko를 num/en과  num/ko를 사용해서 LCS를 돌려 mathing 되는 결과물을 total/kor과 total/eng에 저장. 
 	- **jaccard.py** : 영/한 숫자 feature file을 open해서 kor의 몇 번째 문장이 eng의 몇 번째 문장이 mathing 되는지 jaccard_attribute.csv에 저장
 	- **kkma.py** : input: 한국어 contents / output: 숫자만 추출
-	- **seq.py** : ?
-	- **test.py** : ?
+	- **seq.py** : LCS 뼈대가 나오면 자카드가 같고 라인 차가 같으면 뽑아오는 것
+	- **test.py** : source들 다 합친 것
 	- **total.zip** : LCS.py의 결과 값 (=matching되는 결과물)
 		
 ---
