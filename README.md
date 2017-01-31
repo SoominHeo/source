@@ -29,6 +29,8 @@
 	- **original_html**
 		- **attribute.csv** : (html page #, url, 기사가 쓰인 시간, 기사가 쓰인 년도, html을 뽑은 날짜)
 		- **html.zip** : html 소스 저장
+		
+---
 
 ### SoominHeo/Lovely314
 - **joongang_corpus_data.zip**
@@ -54,6 +56,8 @@
 	- **seq.py** : ?
 	- **test.py** : ?
 	- **total.zip** : LCS.py의 결과 값 (=matching되는 결과물)
+		
+---
 
 ### SoominHeo/source
 - **check_translate_pair.py** : 한국어 url에 matching되는 영어 url이 있는지 확인 / 있으면 return 1, 없으면 return 0
