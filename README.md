@@ -5,14 +5,14 @@ shinhong/korEngCorpus
 	- **matching text**
 		- **Ted_ENmatch.zip** : 매칭시킨 영어 문장
 		- **Ted_Komatch.zip** : 매칭시킨 한글 문장
-	- **org_text
+	- **org_text**
 		- **Ted_org_eng_text.zip** : Original English text(문장별 시간정보 존재, 단락구분 존재)
-		- **Ted_org ext.zip:** : Original Korean text(문장별 시간정보 존재, 단락구분 존재)
+		- **Ted_org ext.zip** : Original Korean text(문장별 시간정보 존재, 단락구분 존재)
 	- **org_html**
-		- **Ted_eng_1.zip: English HTML part1 	
-		- **Ted_eng_2.zip: English HTML part2
-		- **Ted_kor_1.zip: Korean HTML part1
-		- **Ted_kor_2.zip: Korean HTML part2
+		- **Ted_eng_1.zip**: English HTML part1 	
+		- **Ted_eng_2.zip**: English HTML part2
+		- **Ted_kor_1.zip**: Korean HTML part1
+		- **Ted_kor_2.zip**: Korean HTML part2
 		- **html_attribute.csv** : Original HTML을 받을때 정보(제목, 시간등) *다시받아야함*
 - **bin**
 	- **Joongang Daily.py** : 중앙데일리 문장 매칭 전의 모든 단계(URL 받고, 문장구분해서 text받기)
