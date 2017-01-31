@@ -1,4 +1,4 @@
-shinhong/korEngCorpus
+### shinhong/korEngCorpus
 - **ted**
 	- **bin**
 		- **ted.zip** : 테드에 관한 모든 소스코드 (URL 받아와서 문장 매칭까지)
@@ -30,7 +30,7 @@ shinhong/korEngCorpus
 		- **attribute.csv** : (html page #, url, 기사가 쓰인 시간, 기사가 쓰인 년도, html을 뽑은 날짜)
 		- **html.zip** : html 소스 저장
 
-SoominHeo/Lovely314
+### SoominHeo/Lovely314
 - **joongang_corpus_data.zip**
 	- **no_single_space_text** : 단락구분 X
 		- **en** : 영어 contents
@@ -55,7 +55,7 @@ SoominHeo/Lovely314
 	- **test.py** : ?
 	- **total.zip** : LCS.py의 결과 값 (=matching되는 결과물)
 
-SoominHeo/source
+### SoominHeo/source
 - **check_translate_pair.py** : 한국어 url에 matching되는 영어 url이 있는지 확인 / 있으면 return 1, 없으면 return 0
 - **header.py** : url에서 header의 contents 추출
 - **header_for_link.py** : url에서 link가 있는 contents 추출
