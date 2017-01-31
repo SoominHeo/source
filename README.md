@@ -1,1 +1,92 @@
-������
+shinhong/korEngCorpus
+- **ted**
+	- **bin**
+		- **ted.zip** : 테드에 관한 모든 소스코드 (URL 받아와서 문장 매칭까지)
+	- **matching text**
+		- **Ted_ENmatch.zip** : 매칭시킨 영어 문장
+		- **Ted_Komatch.zip** : 매칭시킨 한글 문장
+	- **org_text
+		- **Ted_org_eng_text.zip** : Original English text(문장별 시간정보 존재, 단락구분 존재)
+		- **Ted_org ext.zip:** : Original Korean text(문장별 시간정보 존재, 단락구분 존재)
+	- **org_html**
+		- **Ted_eng_1.zip: English HTML part1 	
+		- **Ted_eng_2.zip: English HTML part2
+		- **Ted_kor_1.zip: Korean HTML part1
+		- **Ted_kor_2.zip: Korean HTML part2
+		- **html_attribute.csv** : Original HTML을 받을때 정보(제목, 시간등) *다시받아야함*
+- **bin**
+	- **Joongang Daily.py** : 중앙데일리 문장 매칭 전의 모든 단계(URL 받고, 문장구분해서 text받기)
+	- **Number_en.py** : 영어 contents에서 숫자 추출
+	- **kkma.py** : 한국어 contents에서 숫자 추출
+- **joongang_daily**
+	- **number** 
+		- **en.zip** : 중앙 데일리 영어 content 에서 숫자 추출
+		- **ko.zip** : 중앙 데일리 한국어 content 에서 숫자 추출
+	- **org_text**
+		- **attribute.csv** : 언제 html을 가지고 왔는지에 대한 시간 정보
+		- **er.zip** : html에서 영어 내용 추출
+		- **ko.zip** : html에서 한국어 내용 추출
+	- **original_html**
+		- **attribute.csv** : (html page #, url, 기사가 쓰인 시간, 기사가 쓰인 년도, html을 뽑은 날짜)
+		- **html.zip** : html 소스 저장
+
+SoominHeo/Lovely314
+- **joongang_corpus_data.zip**
+	- **no_single_space_text** : 단락구분 X
+		- **en** : 영어 contents
+		- **ko** : 한국어 contents
+		- **num**
+			- **en** : 영어 contents에서 숫자 추출
+			- **ko** : 한국어 contents에서 숫자 추출
+	- **original_text** : 단락 구분 O
+		- **en**
+		- **ko**
+		- **num**
+			- **en**
+			- **ko**
+	- **source**
+- **kaist.zip** : 카이스트 6만 pair
+- **sample.xlsx** : wikipedia에서 한-영 pair가 있는 url에서 contents를 100개 뽑아 corpus 생성
+- **source**
+	- **LCS.py** : no_single_space_text의 en과 ko를 num/en과  num/ko를 사용해서 LCS를 돌려 mathing 되는 결과물을 total/kor과 total/eng에 저장. 
+	- **jaccard.py** : 영/한 숫자 feature file을 open해서 kor의 몇 번째 문장이 eng의 몇 번째 문장이 mathing 되는지 jaccard_attribute.csv에 저장
+	- **kkma.py** : input: 한국어 contents / output: 숫자만 추출
+	- **seq.py** : ?
+	- **test.py** : ?
+	- **total.zip** : LCS.py의 결과 값 (=matching되는 결과물)
+
+SoominHeo/source
+- **check_translate_pair.py** : 한국어 url에 matching되는 영어 url이 있는지 확인 / 있으면 return 1, 없으면 return 0
+- **header.py** : url에서 header의 contents 추출
+- **header_for_link.py** : url에서 link가 있는 contents 추출
+- **make_dictionary.py** : ./list/pair470000.csv에서 key=Korean, element=English로 dictionary 생성
+- **metric.py** : 가중치를 / paragraph: 0.243 / photo_check: 0.178 / reference: 0.255 / reading: 0.124 / tree_compare: 0.201로 해서 값 반환
+- **paragraph.py** : 헤더 문단 수 비교
+- **photo_check.py** : 사진 수 비교
+- **reading.py** : 참고문헌 수 비교
+- **reference.py** : 바깥고리 수 비교
+- **translate_k_to_e.py** : ./make_dictionary.py를 import해서 한글 단어를 영어 단어로 바꾼다. 
+- **tree_compare.py** : 목차의 edit distance
+- **wiki.py** : 
+	- def remove_tags(data): 
+	- def save_list(newlist, csv): 
+	- def save_csv(url, title, tt, csv): 
+	- der make_list_csv(): 
+	- def readcsv(): 
+	- def script(list_audio, source): 
+	- def cro(): 
+	- der pair_dic(): 
+	- def pair_cro(): 
+	- def check_all_pair(): 
+	- def delete_subtitle():
+
+- **list**
+	- **New_Random_Sample_382.csv** : 47만개의 한글 wikipedia url중에 500개를 random하게 sampling하고 영어가 있는 page를 추출한 뒤, matric에 적용 후 반환된 값들
+	- **pair470000.csv** : 68만개의 url중에 영어 page가 있는 47만개에 대한 정보 / 형식: ko_url, en_url, 별칭(k), 별칭(e)
+	- **pair_list40.txt** : 수작업으로 찾은 번역 관계에 있는 한국어 url
+	- **random500.csv** : unrlindex680000.csv에서 앞에서 500개를 random하게 배열
+	- **urlindex680000.csv** : 한글 url만 (영어 page가 있는 것을 고려하지 않았음
+- **result**
+	- **all result.csv** : ?
+	- **r_pre472.xls** : 앞에서 500개를 한-영 pair가 있는 것으로 간추리고 (외부링크, 목차, 사진, 토론, 문단)으로 결과 출력 / 1: 매칭 됨 / 0: 매칭 되지 않음 / -1: 없음
+	- **result.csv** : ?
