@@ -5,6 +5,7 @@ from unicodedata import name
 from nltk import sent_tokenize
 import sys
 import copy
+import kor_sentence
 
 
 def remove_tags(data):
@@ -23,145 +24,6 @@ def remove_comma(data):
         
     return result
 
-def kor_sentence(p):
-    temp=""
-    st=[]
-    start = 0
-    finish = 0
-    s_start=0
-    s_finish=0
-    prev=""
-
-    for z in range(len(p)):
-
-              if z==0 and p[z]=="\"" or p[z]=="“":
-                       temp=temp+p[z]
-                       start=1
-                       continue
-              elif z==0:
-                       temp=temp+p[z]
-                       continue
-                
-              elif z>0:
-                       prev=p[z-1]
-
-
-              # next word
-              if z==len(p)-1:
-                       next_word=""
-              else:
-                       next_word=p[z+1]
-
-
-              # double quotes beginning and ending
-              if p[z]=="\"":
-                      if start==1:
-                          finish=1
-                      else:
-                          start=1
-
-              elif p[z]=="“":
-                      start=1
-                  
-              elif p[z]=="”" and start==1:
-                      finish=1
-
-
-              # single quotes beginning and ending 
-              if p[z]=="\'":
-                      if s_start==1:
-                          s_finish=1
-                      else:
-                          s_start=1
-              elif p[z]=="‘":
-                      s_start=1
-
-              elif p[z]=="’" and s_start==1:
-                      s_finish=1
-
-                      
-               # separate sentences
-              if p[z]=="." or p[z]=="!" or p[z]=="?":
-                      if prev=="가" or prev== "나" or prev== "다" or prev== "라" or prev== "까" or prev== "지" or prev== "요" or prev=="죠" or prev=="임" or prev=="음" or prev=="함" or prev=="오":
-                              if start==1 and finish==0:
-                                      temp=temp+p[z]
-
-                              elif start==1 and finish==1:
-                                      if next_word=="":
-                                              temp=temp+p[z]+"\n"
-                                              st.append(temp)
-                                              temp=""
-                                              start=0
-                                              finish=0
-
-                                      elif next_word!=" " and next_word!="\n":
-                                              temp=temp+p[z]
-
-                                      elif next_word==" " or next_word=="\n":
-                                              temp=temp+p[z]+"\n"
-                                              st.append(temp)
-                                              temp=""
-                                              start=0
-                                              finish=0
-
-                              
-                              #single case
-                              elif s_start==1 and s_finish==0:
-                                      temp=temp+p[z]
-                        
-                              elif s_start==1 and s_finish==1:
-                                      if next_word=="":
-                                              temp=temp+p[z]+"\n"
-                                              st.append(temp)
-                                              temp=""
-                                              s_start=0
-                                              s_finish=0
-
-                                      elif next_word!=" " and next_word!="\n":
-                                              temp=temp+p[z]
-                           
-                        
-                                      elif next_word==" " or next_word=="\n":
-                                              temp=temp+p[z]+"\n"
-                                              st.append(temp)
-                                              temp=""
-                                              s_start=0
-                                              s_finish=0
-
-                              else:
-                                      temp=temp+p[z]+"\n"
-                                      st.append(temp)
-                                      temp=""
-                                      start=0
-                                      finish=0
-
-                      elif prev==")":
-                              if p[z-2]=="다" or p[z-2]=="나" or p[z-2]=="가" or p[z-2]=="라" or p[z-2]=="까" or p[z-2]=="지"or p[z-2]=="요"or p[z-2]=="죠" or p[z-2]=="임" or p[z-2]=="음" or p[z-2]=="함" or p[z-2]=="오":
-                                      temp=temp+p[z]+"\n"
-                                      st.append(temp)
-                                      temp=""
-                                      start=0
-                                      finish=0
-
-                      else:
-                              temp=temp+p[z]
-
-              else:
-                     temp=temp+p[z]                  
-
-    for index in range(len(st)):
-       ct=0
-       for w in range(len(st[index])):
-
-           if st[index][w]==" " or st[index][w]=="\n":
-               ct=ct+1
-           else:
-               break
-
-       st[index]=st[index][ct:len(st[index])]
-
-
-    return st                          
 
 def eng_sentence(final_header_eng):
 
@@ -277,7 +139,7 @@ while (1):
     print ("[open]"+"./kor/kor_"+str(i)+".txt & ./eng/eng_"+str(i)+".txt")
     html_eng=f_eng.read()
     sourcesENG = BeautifulSoup(html_eng,"html.parser")
-   
+    
     #쓸때 없는 table 부분 삭제
     tmp_kor=str(sourcesKOR)
     tmp_eng=str(sourcesENG)
@@ -337,7 +199,7 @@ while (1):
         header_kor=header_kor[1:len(header_kor)-1]
 
     #문장을 나누고 파일에 link만 쓰기 
-    final_header_kor=kor_sentence(header_kor)
+    final_header_kor=kor_sentence.kor_sentence(header_kor)
     tmp_kor_link=[[]for j in range(len(final_header_kor))]
 
     #<a ~ </a>부분 잘라내기
@@ -362,29 +224,54 @@ while (1):
                 break
 
     #<a ~ </a>부분에서 단어만 뽑아서 파일에 쓰기
-    
-    
     tmp=[[]for j in range(len(tmp_kor_link))]
     for k in range(len(tmp_kor_link)):
         if len(tmp_kor_link[k])==0:
             f_header_kor.write("\n")
             continue
         for j in range(len(tmp_kor_link[k])):
+            #title 부분 
             st=tmp_kor_link[k][j].find('title="')
             if st==-1:
                 continue
             fi=tmp_kor_link[k][j].find('"',st+7)
             tt=tmp_kor_link[k][j]
-            if str(tt[st+7:st+10])=='en:':
-                f_header_kor.write(str(tt[st+10:fi])+",")
+            
+            if str(tt[fi-1])==' ':
+                tt=tt[st+7:fi-1]
             else:
-                if str(tt[fi-1])==' ':
-                    f_header_kor.write(str(tt[st+7:fi-1])+",")
-                else:    
-                    f_header_kor.write(str(tt[st+7:fi])+",")
+                tt=tt[st+7:fi]
+                
+            kk=tt.find(':')
+            if kk>=0:
+                tt=tt[kk+1:]
+
+            #> ... </a> 부분
+            '''
+            st2=tmp_kor_link[k][j].find('>')
+            fi2=tmp_kor_link[k][j].find('</a>')
+            tt2=tmp_kor_link[k][j]
+
+            if str(tt2[fi2-1])==' ':
+                   tt2=tt2[st2+1:fi2-1]
+            else:
+                   tt2=tt2[st2+1:fi2]
+
+            #title과 > .. </a>비교
+            tt=tt.lower()
+            tt2=tt2.lower()
+
+            if tt==tt2:
+                f_header_kor.write(str(tt)+",")
+               
+            else:
+                continue
+            '''
+            f_header_kor.write(str(tt)+",")
         f_header_kor.write("\n")
     f_header_kor.write("\n")
 
+    
     ####  ENGLISH HEADER  ####
     #header만 추출
     non_bmp_map2=dict.fromkeys(range(0x10000,sys.maxunicode+1),0xfffd)
@@ -429,19 +316,47 @@ while (1):
             f_header_eng.write("\n")
             continue
         for j in range(len(tmp_eng_link[k])):
+            #title 부분 
             st=tmp_eng_link[k][j].find('title="')
             if st==-1:
                 continue
             fi=tmp_eng_link[k][j].find('"',st+7)
             tt=tmp_eng_link[k][j]
-            if str(tt[st+7:st+10])=='en:':
-                f_header_eng.write(str(tt[st+10:fi])+",")
+            
+            if str(tt[fi-1])==' ':
+                tt=tt[st+7:fi-1]
             else:
-                if str(tt[fi-1])==' ':
-                    f_header_eng.write(str(tt[st+7:fi-1])+",")
-                else:    
-                    f_header_eng.write(str(tt[st+7:fi])+",")
+                tt=tt[st+7:fi]
+                
+            kk=tt.find(':')
+            if kk>=0:
+                tt=tt[kk+1:]
+
+            #> ... </a> 부분
+            '''
+            st2=tmp_eng_link[k][j].find('>')
+            fi2=tmp_eng_link[k][j].find('</a>')
+            tt2=tmp_eng_link[k][j]
+
+            if str(tt2[fi2-1])==' ':
+                   tt2=tt2[st2+1:fi2-1]
+            else:
+                   tt2=tt2[st2+1:fi2]
+
+            #title과 > .. </a>비교
+            tt=tt.lower()
+            tt2=tt2.lower()
+
+            if tt==tt2:
+                f_header_eng.write(str(tt)+",")
+                print("tt",tt)
+                print("tt2",tt2)
+            else:
+                continue
+            '''
+            f_header_eng.write(str(tt)+",")
         f_header_eng.write("\n")
     f_header_eng.write("\n")
-
+    
+    
     i=i+1
