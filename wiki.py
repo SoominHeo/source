@@ -286,7 +286,6 @@ def delete_subtitle():
     f.close()
 #make_list_csv()
 #pair_dic()
-pair_cro()
-#cro()
+#pair_cro()
 #check_all_pair()
 #delete_subtitle()
