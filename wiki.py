@@ -17,8 +17,9 @@ import tree_compare
 import check_translate_pair
 import metric
 import header
+import header_for_link
+import translate_k_to_e
 cnt = 40
-
 
 
 def remove_tags(data):
@@ -55,7 +56,7 @@ def save_csv(url,title,tt,csv):
     print(str(url)+",\t"+str(title)+",\t"+str(tt)+"\n")
     csv.write(str(url)+",\t"+str(title)+",\t"+str(tt)+"\n")
 
-def make_list_csv(): #모든 문서
+def make_list_csv():
     csv = open("urlindex.csv","w",encoding='UTF8')
     nexturl = 'https://ko.wikipedia.org/w/index.php?title=%ED%8A%B9%EC%88%98:%EB%AA%A8%EB%93%A0%EB%AC%B8%EC%84%9C&from=%21';
 
@@ -119,7 +120,7 @@ def make_list_csv(): #모든 문서
     csv.close()
 
 def readcsv():
-    f = open("urlindex.csv","r",encoding='UTF8')
+    f = open("500.csv","r",encoding='UTF8')
     return f
 
 
@@ -232,40 +233,41 @@ def pair_cro():
     log.close()
     p.close()
     f.close()
-def check_all_pair():
-    #f = open("New_Random_Sample_382.csv","w")
-    a = 0
-    while 1:
-        #print(a)
-        k = open("./kor/kor_"+str(a)+".txt","r",encoding='UTF8')
-        html_kor=k.read()
-        sources_k = BeautifulSoup(html_kor,"html.parser")
-        e = open("./eng/eng_"+str(a)+".txt","r",encoding='UTF8')
-        html_eng=e.read()
-        sources_e = BeautifulSoup(html_eng,"html.parser")
 
-        
-        t1=reference.reference(sources_k,sources_e)
-        t2=tree_compare.tree_compare(sources_k,sources_e)
-        t3=photo_check.photo_check(sources_k,sources_e)
-        t4=check_translate_pair.check_translate_pair(sources_k)
-        t5=paragraph.paragraph(sources_k,sources_e)
-        t6=reading.reading(sources_k,sources_e)
-        if(t5==-1):
-            a=a+1
-            continue
-        final_result=metric.metric(t1,t2 ,t3 ,t4 ,t5 ,t6) 
 
-        print("["+str(a)+"]",round(final_result,2))
+def check_all_pair(dic, i ):
 
-        if final_result>=0.8:
-            ck=header.header(sources_k, sources_e, a)
-            if ck==-1:
-                a=a+1
-                continue
-                
+    k = open("dd/new random/kor/kor_"+str(i)+".txt","r",encoding='UTF8')
+    sources_k = BeautifulSoup(k,"html.parser")
+
+    e = open("dd/new random/eng/eng_"+str(i)+".txt","r",encoding='UTF8')
+    sources_e = BeautifulSoup(e,"html.parser")
+
+    #Metric 평가요소
+    t1=reference.reference(sources_k, sources_e)
+    t2=tree_compare.tree_compare(sources_k,sources_e)
+    t3=photo_check.photo_check(sources_k,sources_e)
+    t4=check_translate_pair.check_translate_pair(sources_k)
+    t5=paragraph.paragraph(sources_k,sources_e)
+    t6=reading.reading(sources_k,sources_e)
+
+    if(t5==-1):
+        return -1
+     #Metric
+     metric_result=metric.metric(t1,t2,t3,t4,t5,t6)
+
+     if metric_result>=0.8:
+         ck=header.header(sources_k, sources_e,i)
+        if ck==-1:
+                return -1
+        else:
+            ck2=header_for_link.header_for_link(sources_k,sources_e,i)
+            if ck2==-1:
+                return -1
+
+            translate_k_to_e.translate_k_to_e(dic,i)
             
-        a=a+1
+
 
 def delete_subtitle():
     a=0
@@ -284,8 +286,11 @@ def delete_subtitle():
         if(a==10):
             break;
     f.close()
+    
 #make_list_csv()
 #pair_dic()
 #pair_cro()
 #check_all_pair()
 #delete_subtitle()
+
+
