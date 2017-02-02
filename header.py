@@ -5,8 +5,9 @@ from unicodedata import name
 from nltk import sent_tokenize
 import sys
 import copy
+import kor_sentence
 
-i=18
+i=0
 number = str(i)
 
 def remove_tags(data):
@@ -25,146 +26,7 @@ def remove_comma(data):
         
     return result
 
-def kor_sentence(p):
-    temp=""
-    st=[]
-    start = 0
-    finish = 0
-    s_start=0
-    s_finish=0
-    prev=""
-
-    for z in range(len(p)):
-
-              if z==0 and p[z]=="\"" or p[z]=="“":
-                       temp=temp+p[z]
-                       start=1
-                       continue
-              elif z==0:
-                       temp=temp+p[z]
-                       continue
-                
-              elif z>0:
-                       prev=p[z-1]
-
-
-              # next word
-              if z==len(p)-1:
-                       next_word=""
-              else:
-                       next_word=p[z+1]
-
-
-              # double quotes beginning and ending
-              if p[z]=="\"":
-                      if start==1:
-                          finish=1
-                      else:
-                          start=1
-
-              elif p[z]=="“":
-                      start=1
-                  
-              elif p[z]=="”" and start==1:
-                      finish=1
-
-
-              # single quotes beginning and ending 
-              if p[z]=="\'":
-                      if s_start==1:
-                          s_finish=1
-                      else:
-                          s_start=1
-              elif p[z]=="‘":
-                      s_start=1
-
-              elif p[z]=="’" and s_start==1:
-                      s_finish=1
-
-                      
-               # separate sentences
-              if p[z]=="." or p[z]=="!" or p[z]=="?":
-                      if prev=="가" or prev== "나" or prev== "다" or prev== "라" or prev== "까" or prev== "지" or prev== "요" or prev=="죠" or prev=="임" or prev=="음" or prev=="함" or prev=="오":
-                              if start==1 and finish==0:
-                                      temp=temp+p[z]
-
-                              elif start==1 and finish==1:
-                                      if next_word=="":
-                                              temp=temp+p[z]+"\n"
-                                              st.append(temp)
-                                              temp=""
-                                              start=0
-                                              finish=0
-
-                                      elif next_word!=" " and next_word!="\n":
-                                              temp=temp+p[z]
-
-                                      elif next_word==" " or next_word=="\n":
-                                              temp=temp+p[z]+"\n"
-                                              st.append(temp)
-                                              temp=""
-                                              start=0
-                                              finish=0
-
-                              
-                              #single case
-                              elif s_start==1 and s_finish==0:
-                                      temp=temp+p[z]
-                        
-                              elif s_start==1 and s_finish==1:
-                                      if next_word=="":
-                                              temp=temp+p[z]+"\n"
-                                              st.append(temp)
-                                              temp=""
-                                              s_start=0
-                                              s_finish=0
-
-                                      elif next_word!=" " and next_word!="\n":
-                                              temp=temp+p[z]
-                           
-                        
-                                      elif next_word==" " or next_word=="\n":
-                                              temp=temp+p[z]+"\n"
-                                              st.append(temp)
-                                              temp=""
-                                              s_start=0
-                                              s_finish=0
-
-                              else:
-                                      temp=temp+p[z]+"\n"
-                                      st.append(temp)
-                                      temp=""
-                                      start=0
-                                      finish=0
-
-                      elif prev==")":
-                              if p[z-2]=="다" or p[z-2]=="나" or p[z-2]=="가" or p[z-2]=="라" or p[z-2]=="까" or p[z-2]=="지"or p[z-2]=="요"or p[z-2]=="죠" or p[z-2]=="임" or p[z-2]=="음" or p[z-2]=="함" or p[z-2]=="오":
-                                      temp=temp+p[z]+"\n"
-                                      st.append(temp)
-                                      temp=""
-                                      start=0
-                                      finish=0
-
-                      else:
-                              temp=temp+p[z]
-
-              else:
-                     temp=temp+p[z]                  
-
-    for index in range(len(st)):
-       ct=0
-       for w in range(len(st[index])):
-
-           if st[index][w]==" " or st[index][w]=="\n":
-               ct=ct+1
-           else:
-               break
-
-       st[index]=st[index][ct:len(st[index])]
-
-
-    return st                          
-
+                    
 def eng_sentence(final_header_eng):
 
     start=-1
@@ -270,18 +132,16 @@ def check_table_index(sources):
                 
         
 def header(sourcesKOR, sourcesENG,i):
-
-
+        
     #저장된 한-영 HTML 받아오기
-    '''
-    f_kor=open("dd/dd/kor/kor_"+str(i)+".txt","r",encoding='UTF8')
+    f_kor=open("src/kor/kor_"+str(i)+".txt","r",encoding='UTF8')
     html_kor=f_kor.read()
     sourcesKOR = BeautifulSoup(html_kor,"html.parser")
 
-    f_eng=open("dd/dd/eng/eng_"+str(i)+".txt","r",encoding='UTF8')
+    f_eng=open("src/eng/eng_"+str(i)+".txt","r",encoding='UTF8')
     html_eng=f_eng.read()
     sourcesENG = BeautifulSoup(html_eng,"html.parser")
-    '''
+    
     
     #샘플 한-영 HTML 받아오기
     '''
@@ -296,8 +156,6 @@ def header(sourcesKOR, sourcesENG,i):
     
    
     #쓸때 없는 table 부분 삭제
-    
-
     tmp_kor=str(sourcesKOR)
     tmp_eng=str(sourcesENG)
     
@@ -307,25 +165,25 @@ def header(sourcesKOR, sourcesENG,i):
 
     #불필요한 table제거 (kor)  
     kkk=[]
-    for i in range(len(table_set_kor)):
-        if table_set_kor[i]==[]:
+    for j in range(len(table_set_kor)):
+        if table_set_kor[j]==[]:
             continue
-        kkk.append(tmp_kor[table_set_kor[i][0]:table_set_kor[i][1]+9])
+        kkk.append(tmp_kor[table_set_kor[j][0]:table_set_kor[j][1]+9])
         
 
-    for i in range(len(kkk)): 
-        tmp_kor=tmp_kor.replace(str(kkk[i]),'')
+    for k in range(len(kkk)): 
+        tmp_kor=tmp_kor.replace(str(kkk[k]),'')
 
     #불필요한 table제거 (eng)  
     eee=[]
-    for i in range(len(table_set_eng)):
-        if table_set_eng[i]==[]:
+    for l in range(len(table_set_eng)):
+        if table_set_eng[l]==[]:
             continue
-        eee.append(tmp_eng[table_set_eng[i][0]:table_set_eng[i][1]+9])
+        eee.append(tmp_eng[table_set_eng[l][0]:table_set_eng[l][1]+9])
         
 
-    for i in range(len(eee)): 
-        tmp_eng=tmp_eng.replace(str(eee[i]),'')
+    for t in range(len(eee)): 
+        tmp_eng=tmp_eng.replace(str(eee[t]),'')
         
     
     sourcesKOR_tmp=BeautifulSoup(tmp_kor,"html.parser")
@@ -339,14 +197,11 @@ def header(sourcesKOR, sourcesENG,i):
    
     #문단이 없으면 다음 문서로 넘어가기 
     if len(para_kor)==0 or len(para_eng)==0:
-        i=i+1
-        return -1
-                
-    #print("["+str(i)+"]")    
+        return -1   
 
     #추출할 header를 저장하기 위한 파일오픈
-    f_header_kor=open("dd/dd/kor_header/[header]kor_"+str(i)+".txt","w",encoding='UTF8')
-    f_header_eng=open("dd/dd/eng_header/[header]eng_"+str(i)+".txt","w",encoding='UTF8')
+    f_header_kor=open("kor_header/kor_"+str(i)+".txt","w",encoding='UTF8')
+    f_header_eng=open("eng_header/eng_"+str(i)+".txt","w",encoding='UTF8')
 
        
     ####  KOREA  HEADER  ####
@@ -364,7 +219,7 @@ def header(sourcesKOR, sourcesENG,i):
         header_kor=header_kor[1:len(header_kor)-1]
 
     #문장을 나누고 파일에 쓰기 
-    final_header_kor=kor_sentence(header_kor)
+    final_header_kor=kor_sentence.kor_sentence(header_kor)
     for m in range(len(final_header_kor)):
                    #print(final_header_kor[m])
                    f_header_kor.write(final_header_kor[m])
@@ -396,9 +251,8 @@ def header(sourcesKOR, sourcesENG,i):
                 f_header_eng.write("\n") 
     f_header_eng.write("\n")            
 
-    return 0 
-    #print("\n\n")
-    #print("\n\n")
+    return 0
+    
 
     
 
